@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from 'react-native-picker-select';
 import Icon from "react-native-vector-icons/Feather";
 import { initialFoodLogs, initialSafeFoods } from "../data/mockData";
 
@@ -53,15 +53,37 @@ const MainScreen = () => {
 
         <Text style={styles.label}>Reaction</Text>
         <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={newReaction}
-            onValueChange={(itemValue) => setNewReaction(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Accepted" value="accepted" />
-            <Picker.Item label="Rejected" value="rejected" />
-            <Picker.Item label="Tried" value="tried" />
-          </Picker>
+          <RNPickerSelect
+            value={newReaction}
+            onValueChange={(value) => setNewReaction(value)}
+            items={[
+              { label: 'Accepted', value: 'accepted' },
+              { label: 'Rejected', value: 'rejected' },
+              { label: 'Tried', value: 'tried' }
+            ]}
+            style={{
+              inputIOS: {
+                fontSize: 16,
+                paddingVertical: 12,
+                paddingHorizontal: 10,
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 4,
+                color: 'black',
+                paddingRight: 30
+              },
+              inputAndroid: {
+                fontSize: 16,
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 4,
+                color: 'black',
+                paddingRight: 30
+              }
+            }}
+          />
         </View>
 
         <Text style={styles.label}>Notes</Text>
@@ -100,8 +122,8 @@ const MainScreen = () => {
                 log.reaction === "accepted"
                   ? styles.acceptedBadge
                   : log.reaction === "rejected"
-                  ? styles.rejectedBadge
-                  : styles.triedBadge,
+                    ? styles.rejectedBadge
+                    : styles.triedBadge,
               ]}
             >
               {log.reaction}
