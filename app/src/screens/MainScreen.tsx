@@ -9,8 +9,34 @@ import {
   Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { initialFoodLogs, initialSafeFoods } from "../data/mockData";
+import { initialFoodLogs } from "../data/mockData";
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Progress from "../components/Progress";
+
+
+function formatDate(date) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    if (year === today.getFullYear()) {
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayOfWeek = daysOfWeek[date.getDay()];
+      return `${dayOfWeek} ${month}/${day}`;
+    } else {
+      return `${month}/${day}/${year}`;
+    }
+  }
+}
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("log");
@@ -18,7 +44,6 @@ const MainScreen = () => {
   const [newFood, setNewFood] = useState("");
   const [newReaction, setNewReaction] = useState("accepted");
   const [newNotes, setNewNotes] = useState("");
-  const [safeFoods] = useState(initialSafeFoods);
   const [mealType, setMealType] = useState('breakfast');
 
 
@@ -28,7 +53,7 @@ const MainScreen = () => {
       food: newFood,
       reaction: newReaction,
       mealType: mealType,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toString(),
       notes: newNotes
     };
     if (newFood == "") {
@@ -221,7 +246,7 @@ const MainScreen = () => {
               <Text style={styles.logMealType}>{log.mealType}</Text>
               <Text style={styles.logNotes}>{log.notes}</Text>
             </View>
-            <View>
+            <View style={{flexDirection: "column", alignItems: "center"}}>
               <Text style={[
                 styles.reactionBadge,
                 log.reaction === 'accepted' ? styles.acceptedBadge :
@@ -230,7 +255,7 @@ const MainScreen = () => {
               ]}>
                 {log.reaction}
               </Text>
-              <Text style={styles.logDate}>{log.date}</Text>
+              <Text style={styles.logDate}>{formatDate(new Date(log.date))}</Text>
             </View>
           </View>
         </Swipeable>
@@ -239,32 +264,7 @@ const MainScreen = () => {
   );
 
   const renderProgressTab = () => (
-    <ScrollView style={styles.tabContent}>
-      <Text style={styles.sectionTitle}>Progress Overview</Text>
-
-      <View style={styles.progressSection}>
-        <Text style={styles.subsectionTitle}>Acceptance Rate</Text>
-        <View style={styles.progressBar}>
-          <View
-            style={[styles.progressFill, { width: `${calculateProgress()}%` }]}
-          />
-        </View>
-        <Text style={styles.progressText}>
-          {calculateProgress()}% of foods accepted
-        </Text>
-      </View>
-
-      <View style={styles.safeFoodsSection}>
-        <Text style={styles.subsectionTitle}>Safe Foods List</Text>
-        <View style={styles.safeFoodTags}>
-          {safeFoods.map((food, index) => (
-            <Text key={index} style={styles.safeFoodTag}>
-              {food}
-            </Text>
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+    <Progress progress={calculateProgress()}/>
   );
 
   const renderMealIdeasTab = () => (
@@ -526,6 +526,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
+  logMealType: {
+    color: "#6200ee"
+  },
   logNotes: {
     color: "#666",
     marginTop: 4,
@@ -561,40 +564,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
   },
-  progressSection: {
-    marginBottom: 24,
-  },
   subsectionTitle: {
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 8,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#4caf50",
-  },
-  progressText: {
-    color: "#666",
-    marginTop: 4,
-  },
-  safeFoodTags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  safeFoodTag: {
-    backgroundColor: "#e8f0fe",
-    color: "#1a73e8",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    overflow: "hidden",
   },
   mealList: {
     gap: 16,
