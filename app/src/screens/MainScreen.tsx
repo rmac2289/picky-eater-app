@@ -8,9 +8,9 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
-import RNPickerSelect from 'react-native-picker-select';
 import Icon from "react-native-vector-icons/Feather";
 import { initialFoodLogs, initialSafeFoods } from "../data/mockData";
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("log");
@@ -19,18 +19,25 @@ const MainScreen = () => {
   const [newReaction, setNewReaction] = useState("accepted");
   const [newNotes, setNewNotes] = useState("");
   const [safeFoods] = useState(initialSafeFoods);
+  const [mealType, setMealType] = useState('breakfast');
+
 
   const handleAddFoodLog = () => {
     const newLog = {
       id: foodLogs.length + 1,
       food: newFood,
       reaction: newReaction,
-      date: new Date().toISOString().split("T")[0],
-      notes: newNotes,
+      mealType: mealType,
+      date: new Date().toISOString().split('T')[0],
+      notes: newNotes
     };
+    if (newFood == "") {
+      alert("No food added")
+      return;
+    }
     setFoodLogs([...foodLogs, newLog]);
-    setNewFood("");
-    setNewNotes("");
+    setNewFood('');
+    setNewNotes('');
   };
 
   const calculateProgress = () => {
@@ -43,47 +50,132 @@ const MainScreen = () => {
   const renderFoodLoggingTab = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Food Item</Text>
+        <Text style={styles.label}>Food</Text>
         <TextInput
           style={styles.input}
           value={newFood}
           onChangeText={setNewFood}
           placeholder="Enter food name"
         />
+        <Text style={styles.label}>Meal</Text>
+        <View style={styles.mealTypeSelector}>
+          <View style={styles.mealTypeRow}>
+            <TouchableOpacity
+              style={[
+                styles.mealTypeButton,
+                mealType === 'breakfast' && styles.mealTypeButtonSelected,
+                { backgroundColor: mealType === 'breakfast' ? '#e3f2fd' : '#fff' }
+              ]}
+              onPress={() => setMealType('breakfast')}
+            >
+              <Text style={[
+                styles.mealTypeButtonText,
+                mealType === 'breakfast' && { color: '#1565c0' }
+              ]}>
+                Breakfast
+              </Text>
+            </TouchableOpacity>
 
+            <TouchableOpacity
+              style={[
+                styles.mealTypeButton,
+                mealType === 'lunch' && styles.mealTypeButtonSelected,
+                { backgroundColor: mealType === 'lunch' ? '#e3f2fd' : '#fff' }
+              ]}
+              onPress={() => setMealType('lunch')}
+            >
+              <Text style={[
+                styles.mealTypeButtonText,
+                mealType === 'lunch' && { color: '#1565c0' }
+              ]}>
+                Lunch
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.mealTypeRow}>
+            <TouchableOpacity
+              style={[
+                styles.mealTypeButton,
+                mealType === 'dinner' && styles.mealTypeButtonSelected,
+                { backgroundColor: mealType === 'dinner' ? '#e3f2fd' : '#fff' }
+              ]}
+              onPress={() => setMealType('dinner')}
+            >
+              <Text style={[
+                styles.mealTypeButtonText,
+                mealType === 'dinner' && { color: '#1565c0' }
+              ]}>
+                Dinner
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.mealTypeButton,
+                mealType === 'snack' && styles.mealTypeButtonSelected,
+                { backgroundColor: mealType === 'snack' ? '#e3f2fd' : '#fff' }
+              ]}
+              onPress={() => setMealType('snack')}
+            >
+              <Text style={[
+                styles.mealTypeButtonText,
+                mealType === 'snack' && { color: '#1565c0' }
+              ]}>
+                Snack
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <Text style={styles.label}>Reaction</Text>
-        <View style={styles.pickerContainer}>
-          <RNPickerSelect
-            value={newReaction}
-            onValueChange={(value) => setNewReaction(value)}
-            items={[
-              { label: 'Accepted', value: 'accepted' },
-              { label: 'Rejected', value: 'rejected' },
-              { label: 'Tried', value: 'tried' }
+        <View style={styles.reactionSelector}>
+          <TouchableOpacity
+            style={[
+              styles.reactionButton,
+              newReaction === 'accepted' && styles.reactionButtonSelected,
+              { backgroundColor: newReaction === 'accepted' ? '#e8f5e9' : '#fff' }
             ]}
-            style={{
-              inputIOS: {
-                fontSize: 16,
-                paddingVertical: 12,
-                paddingHorizontal: 10,
-                borderWidth: 1,
-                borderColor: '#e0e0e0',
-                borderRadius: 4,
-                color: 'black',
-                paddingRight: 30
-              },
-              inputAndroid: {
-                fontSize: 16,
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                borderWidth: 1,
-                borderColor: '#e0e0e0',
-                borderRadius: 4,
-                color: 'black',
-                paddingRight: 30
-              }
-            }}
-          />
+            onPress={() => setNewReaction('accepted')}
+          >
+            <Text style={[
+              styles.reactionButtonText,
+              newReaction === 'accepted' && { color: '#2e7d32' }
+            ]}>
+              Accepted
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.reactionButton,
+              newReaction === 'rejected' && styles.reactionButtonSelected,
+              { backgroundColor: newReaction === 'rejected' ? '#ffebee' : '#fff' }
+            ]}
+            onPress={() => setNewReaction('rejected')}
+          >
+            <Text style={[
+              styles.reactionButtonText,
+              newReaction === 'rejected' && { color: '#c62828' }
+            ]}>
+              Rejected
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.reactionButton,
+              newReaction === 'tried' && styles.reactionButtonSelected,
+              { backgroundColor: newReaction === 'tried' ? '#fff3e0' : '#fff' }
+            ]}
+            onPress={() => setNewReaction('tried')}
+          >
+            <Text style={[
+              styles.reactionButtonText,
+              newReaction === 'tried' && { color: '#ef6c00' }
+            ]}>
+              Tried
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.label}>Notes</Text>
@@ -109,28 +201,39 @@ const MainScreen = () => {
         </View>
       </View>
 
-      {foodLogs.map((log) => (
-        <View key={log.id} style={styles.logItem}>
-          <View>
-            <Text style={styles.logFood}>{log.food}</Text>
-            <Text style={styles.logNotes}>{log.notes}</Text>
-          </View>
-          <View>
-            <Text
-              style={[
-                styles.reactionBadge,
-                log.reaction === "accepted"
-                  ? styles.acceptedBadge
-                  : log.reaction === "rejected"
-                    ? styles.rejectedBadge
-                    : styles.triedBadge,
-              ]}
+      {foodLogs.map(log => (
+        <Swipeable
+          key={log.id}
+          renderRightActions={() => (
+            <TouchableOpacity
+              style={styles.deleteSwipe}
+              onPress={() => {
+                setFoodLogs(foodLogs.filter(item => item.id !== log.id));
+              }}
             >
-              {log.reaction}
-            </Text>
-            <Text style={styles.logDate}>{log.date}</Text>
+              <Text style={styles.deleteSwipeText}>Delete</Text>
+            </TouchableOpacity>
+          )}
+        >
+          <View style={styles.logItem}>
+            <View>
+              <Text style={styles.logFood}>{log.food}</Text>
+              <Text style={styles.logMealType}>{log.mealType}</Text>
+              <Text style={styles.logNotes}>{log.notes}</Text>
+            </View>
+            <View>
+              <Text style={[
+                styles.reactionBadge,
+                log.reaction === 'accepted' ? styles.acceptedBadge :
+                  log.reaction === 'rejected' ? styles.rejectedBadge :
+                    styles.triedBadge
+              ]}>
+                {log.reaction}
+              </Text>
+              <Text style={styles.logDate}>{log.date}</Text>
+            </View>
           </View>
-        </View>
+        </Swipeable>
       ))}
     </ScrollView>
   );
@@ -201,8 +304,6 @@ const MainScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Picky Eater Helper</Text>
-
       <View style={styles.tabs}>
         <TouchableOpacity
           style={[styles.tab, activeTab === "log" && styles.activeTab]}
@@ -232,6 +333,61 @@ const MainScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  deleteSwipe: {
+    backgroundColor: '#ff1744',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    padding: 20,
+    marginBottom: 8,
+  },
+  deleteSwipeText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  reactionSelector: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    gap: 8,
+  },
+  reactionButton: {
+    flex: 1,
+    padding: 8,  // reduced from 12
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reactionButtonText: {
+    fontSize: 12,  // reduced from 14
+    fontWeight: '500',
+    color: '#666',
+  },
+  mealTypeSelector: {
+    marginBottom: 16,
+  },
+  mealTypeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  mealTypeButton: {
+    width: '48%', // This gives space between buttons
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mealTypeButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#666',
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -315,8 +471,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e0e0e0",
     borderRadius: 4,
-    marginBottom: 16,
-    overflow: "hidden",
+    marginBottom: 16
   },
   picker: {
     marginTop: Platform.OS === "ios" ? 0 : -8,
@@ -448,7 +603,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 2,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -469,6 +624,9 @@ const styles = StyleSheet.create({
   mealDescription: {
     color: "#666",
   },
+  description: {
+    marginBottom: 10
+  }
 });
 
 export default MainScreen;

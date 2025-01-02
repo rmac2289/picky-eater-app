@@ -1,19 +1,28 @@
-import React from "react";
-import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
-import MainScreen from "./src/screens/MainScreen";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MainScreen from './src/screens/MainScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+const Stack = createNativeStackNavigator();
 
 export default function Index() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <MainScreen />
-    </SafeAreaView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack.Navigator>
+        <Stack.Screen 
+          name="Main" 
+          component={MainScreen}
+          options={{
+            title: 'Picky Eater Helper',
+            headerStyle: {
+              backgroundColor: '#6200ee',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+      </Stack.Navigator>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-});
