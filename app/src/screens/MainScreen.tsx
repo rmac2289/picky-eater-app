@@ -14,23 +14,24 @@ import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Progress from "../components/Progress";
 
 
-function formatDate(date) {
+function formatDate(date: Date | string): string {
+  const dateObj = new Date(date);
   const today = new Date();
-  const yesterday = new Date(today);
+  const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
-  if (date.toDateString() === today.toDateString()) {
+  if (dateObj.toDateString() === today.toDateString()) {
     return "Today";
-  } else if (date.toDateString() === yesterday.toDateString()) {
+  } else if (dateObj.toDateString() === yesterday.toDateString()) {
     return "Yesterday";
   } else {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
+    const month = dateObj.getMonth() + 1;
+    const day = dateObj.getDate();
+    const year = dateObj.getFullYear();
 
     if (year === today.getFullYear()) {
       const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const dayOfWeek = daysOfWeek[date.getDay()];
+      const dayOfWeek = daysOfWeek[dateObj.getDay()];
       return `${dayOfWeek} ${month}/${day}`;
     } else {
       return `${month}/${day}/${year}`;
@@ -65,7 +66,7 @@ const MainScreen = () => {
     setNewNotes('');
   };
 
-  const calculateProgress = () => {
+  const calculateProgress = (): number => {
     const accepted = foodLogs.filter(
       (log) => log.reaction === "accepted"
     ).length;
@@ -88,7 +89,6 @@ const MainScreen = () => {
             <TouchableOpacity
               style={[
                 styles.mealTypeButton,
-                mealType === 'breakfast' && styles.mealTypeButtonSelected,
                 { backgroundColor: mealType === 'breakfast' ? '#e3f2fd' : '#fff' }
               ]}
               onPress={() => setMealType('breakfast')}
@@ -104,7 +104,6 @@ const MainScreen = () => {
             <TouchableOpacity
               style={[
                 styles.mealTypeButton,
-                mealType === 'lunch' && styles.mealTypeButtonSelected,
                 { backgroundColor: mealType === 'lunch' ? '#e3f2fd' : '#fff' }
               ]}
               onPress={() => setMealType('lunch')}
@@ -122,7 +121,6 @@ const MainScreen = () => {
             <TouchableOpacity
               style={[
                 styles.mealTypeButton,
-                mealType === 'dinner' && styles.mealTypeButtonSelected,
                 { backgroundColor: mealType === 'dinner' ? '#e3f2fd' : '#fff' }
               ]}
               onPress={() => setMealType('dinner')}
@@ -138,7 +136,6 @@ const MainScreen = () => {
             <TouchableOpacity
               style={[
                 styles.mealTypeButton,
-                mealType === 'snack' && styles.mealTypeButtonSelected,
                 { backgroundColor: mealType === 'snack' ? '#e3f2fd' : '#fff' }
               ]}
               onPress={() => setMealType('snack')}
@@ -157,7 +154,6 @@ const MainScreen = () => {
           <TouchableOpacity
             style={[
               styles.reactionButton,
-              newReaction === 'accepted' && styles.reactionButtonSelected,
               { backgroundColor: newReaction === 'accepted' ? '#e8f5e9' : '#fff' }
             ]}
             onPress={() => setNewReaction('accepted')}
@@ -173,7 +169,6 @@ const MainScreen = () => {
           <TouchableOpacity
             style={[
               styles.reactionButton,
-              newReaction === 'rejected' && styles.reactionButtonSelected,
               { backgroundColor: newReaction === 'rejected' ? '#ffebee' : '#fff' }
             ]}
             onPress={() => setNewReaction('rejected')}
@@ -189,7 +184,6 @@ const MainScreen = () => {
           <TouchableOpacity
             style={[
               styles.reactionButton,
-              newReaction === 'tried' && styles.reactionButtonSelected,
               { backgroundColor: newReaction === 'tried' ? '#fff3e0' : '#fff' }
             ]}
             onPress={() => setNewReaction('tried')}

@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from './src/screens/MainScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React from 'react';
 
 const Stack = createNativeStackNavigator();
 

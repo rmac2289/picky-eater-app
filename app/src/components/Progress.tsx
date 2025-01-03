@@ -7,7 +7,11 @@ import {
 } from "react-native";
 import { initialSafeFoods } from "../data/mockData";
 
-const Progress = ({progress}) => {
+interface ProgressProps {
+    progress: number;
+  }
+
+const Progress = ({progress}: ProgressProps) => {
     const [safeFoods] = useState(initialSafeFoods);
     return (
         <ScrollView style={styles.tabContent}>
@@ -25,7 +29,7 @@ const Progress = ({progress}) => {
                 </Text>
               </View>
         
-              <View style={styles.safeFoodsSection}>
+              <View>
                 <Text style={styles.subsectionTitle}>Safe Foods List</Text>
                 <View style={styles.safeFoodTags}>
                   {safeFoods.map((food, index) => (
