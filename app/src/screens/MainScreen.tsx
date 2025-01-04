@@ -7,11 +7,14 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { initialFoodLogs } from "../data/mockData";
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Progress from "../components/Progress";
+import { useAuth } from "../context/AuthContext";
+import CustomAlert from "../components/CustomAlert";
 
 
 function formatDate(date: Date | string): string {
@@ -39,13 +42,32 @@ function formatDate(date: Date | string): string {
   }
 }
 
-const MainScreen = () => {
+const MainScreen = ({ navigation }: any) => {
   const [activeTab, setActiveTab] = useState("log");
   const [foodLogs, setFoodLogs] = useState(initialFoodLogs);
   const [newFood, setNewFood] = useState("");
   const [newReaction, setNewReaction] = useState("accepted");
   const [newNotes, setNewNotes] = useState("");
   const [mealType, setMealType] = useState('breakfast');
+  const { signOut } = useAuth();
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutAlert(true);
+  };
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{ marginRight: 15 }}
+        >
+          <Text style={{ color: '#fff' }}>Logout</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, signOut]);
 
 
   const handleAddFoodLog = () => {
@@ -240,7 +262,7 @@ const MainScreen = () => {
               <Text style={styles.logMealType}>{log.mealType}</Text>
               <Text style={styles.logNotes}>{log.notes}</Text>
             </View>
-            <View style={{flexDirection: "column", alignItems: "center"}}>
+            <View style={{ flexDirection: "column", alignItems: "center" }}>
               <Text style={[
                 styles.reactionBadge,
                 log.reaction === 'accepted' ? styles.acceptedBadge :
@@ -258,7 +280,7 @@ const MainScreen = () => {
   );
 
   const renderProgressTab = () => (
-    <Progress progress={calculateProgress()}/>
+    <Progress progress={calculateProgress()} />
   );
 
   const renderMealIdeasTab = () => (
@@ -297,32 +319,42 @@ const MainScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tabs}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "log" && styles.activeTab]}
-          onPress={() => setActiveTab("log")}
-        >
-          <Text style={styles.tabText}>Food Log</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "progress" && styles.activeTab]}
-          onPress={() => setActiveTab("progress")}
-        >
-          <Text style={styles.tabText}>Progress</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "meals" && styles.activeTab]}
-          onPress={() => setActiveTab("meals")}
-        >
-          <Text style={styles.tabText}>Meal Ideas</Text>
-        </TouchableOpacity>
-      </View>
+    <>
+      <View style={styles.container}>
+        <View style={styles.tabs}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "log" && styles.activeTab]}
+            onPress={() => setActiveTab("log")}
+          >
+            <Text style={styles.tabText}>Food Log</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "progress" && styles.activeTab]}
+            onPress={() => setActiveTab("progress")}
+          >
+            <Text style={styles.tabText}>Progress</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "meals" && styles.activeTab]}
+            onPress={() => setActiveTab("meals")}
+          >
+            <Text style={styles.tabText}>Meal Ideas</Text>
+          </TouchableOpacity>
+        </View>
 
-      {activeTab === "log" && renderFoodLoggingTab()}
-      {activeTab === "progress" && renderProgressTab()}
-      {activeTab === "meals" && renderMealIdeasTab()}
-    </View>
+        {activeTab === "log" && renderFoodLoggingTab()}
+        {activeTab === "progress" && renderProgressTab()}
+        {activeTab === "meals" && renderMealIdeasTab()}
+      </View>
+      <CustomAlert
+        visible={showLogoutAlert}
+        onCancel={() => setShowLogoutAlert(false)}
+        onConfirm={() => {
+          setShowLogoutAlert(false);
+          signOut();
+        }}
+      />
+    </>
   );
 };
 
